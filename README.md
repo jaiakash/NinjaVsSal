@@ -8,7 +8,7 @@ Implement the game shown Refernces > App using canvas and provided resources.
 3) Added vibration and music. <b>Done</b>
 
 ## Hackermode:
-1) Implement Virtual Joy-Stick.
+1) Implement Virtual Joy-Stick. <b>Done</b>
 2) Increase game speed as time progresses. <b>Done</b>
 3) Added random enemy spawn. <b>Done</b>
 
