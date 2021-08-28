@@ -36,8 +36,9 @@ public class Game extends View {
     int player_y=-1;
     int max_jump=200;
     int max_jump_joystick=100;
-    int enemy_speed=2;
+    int enemy_speed=3;
     int position_js=0;
+    float stamina=100;
 
     float score_val = 0;
     float high_score_val = 0;
@@ -66,6 +67,9 @@ public class Game extends View {
         Typeface typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD);
         paint_score.setTypeface(typeface);
 
+        paint_score.setColor(Color.RED);
+        paint_score.setTextSize(45);
+
         //Background music
         ring_background.setLooping(true);
         ring_background.start();
@@ -81,7 +85,7 @@ public class Game extends View {
 
         paint_player.setColor(Color.GREEN);
         if(player_y<=0)player_y=height-75;
-        if(clicked)player_y-=3;
+        if(clicked)player_y-=5;
         if(player_y<=(height-75-max_jump)) clicked=false;
         if(!clicked && player_y<height-75)player_y+=3;
         player.bottom=player_y-150;
@@ -96,10 +100,7 @@ public class Game extends View {
         enemy.bottom=height-210;
         enemy.top=height-355;
         if(enemy_x<=0){
-            enemy_x=width-75;
-            kills++;
-            enemy_speed+=1;
-            random_enemy_drawable = ThreadLocalRandom.current().nextInt(0, drawable_enemy.length);
+            respawnNewEnemy();
         }
         enemy.left=enemy_x-50;
         enemy.right=enemy_x+50;
@@ -109,12 +110,11 @@ public class Game extends View {
         enmy.draw(canvas);
         //canvas.drawRect(enemy,paint_enemy);
 
-        paint_score.setColor(Color.RED);
-        paint_score.setTextSize(45);
         high_score_val=gethigh_score();
         canvas.drawText("High Score : "+String.format("%.02f", high_score_val),75,75,paint_score);
         canvas.drawText("Kills : "+kills,width-400,150,paint_score);
         canvas.drawText("Score : "+String.format("%.02f", score_val),width-400,75,paint_score);
+        canvas.drawText("Stamina : "+String.format("%.01f", stamina),middle-200,75,paint_score);
 
         // Joystick Draw
         paint_joystick.setColor(Color.LTGRAY);
@@ -134,25 +134,40 @@ public class Game extends View {
         }
         joystick.left=100;
         joystick.right=200;
+        canvas.drawRoundRect(width-200,height-150,width-100,height-50,25,25,paint_joystick);
         canvas.drawRoundRect(joystick.left,joystick.top,joystick.right,joystick.bottom,50,50,paint_joystick);
 
         //When enemy and player collide, Game Over
         if(Rect.intersects(enemy,player)) {
-            Toast.makeText(getContext(), "Game Over, Your Score is "+String.format("%.02f", score_val), Toast.LENGTH_SHORT).show();
-            sethigh_score(score_val);
-
-            Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-            v.vibrate(400);
-
-            score_val=0;
-            enemy_x=0;
-            kills=-1;
-            enemy_speed=2;
+            GameOver();
         }
 
         enemy_x-=enemy_speed;
         score_val+=0.01;
+        if(stamina<100){
+            stamina+=0.005;
+        }
         postInvalidate();
+    }
+
+    private void respawnNewEnemy() {
+        enemy_x=getWidth()-75;
+        enemy_speed+=1;
+        random_enemy_drawable = ThreadLocalRandom.current().nextInt(0, drawable_enemy.length);
+    }
+
+    private void GameOver(){
+        Toast.makeText(getContext(), "Game Over, Your Score is "+String.format("%.02f", score_val), Toast.LENGTH_SHORT).show();
+        sethigh_score(score_val);
+
+        Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(400);
+
+        score_val=0;
+        enemy_x=0;
+        kills=-1;
+        enemy_speed=3;
+        stamina=100;
     }
 
     @Override
@@ -170,12 +185,29 @@ public class Game extends View {
         switch (maskedAction) {
 
             case MotionEvent.ACTION_DOWN:
+
+                // For movement joystick
                 if((event.getX()<=joystick.right &&  event.getX()>=joystick.left) &&
                         (event.getY()>=getHeight()-150 && event.getY()<=getHeight()-50)) {
                     if(position_js>getHeight()-100-max_jump_joystick && position_js<getHeight()-100+max_jump_joystick) {
                         clicked = true;
                         position_js = (int) event.getY();
                     }
+                }
+
+                // For attack joystick
+                if(event.getX()>=(getWidth()-200) && event.getX()<=(getWidth()-100) &&
+                        event.getY()>=(getHeight()-150) && event.getY()<=(getHeight()-50) ){
+                    stamina-=25;
+                    if(stamina<=0)
+                        GameOver();
+
+                    // Checking for enemy killing
+                    if((enemy.left-player.left)<300) {
+                        kills++;
+                        respawnNewEnemy();
+                    }
+                        //Toast.makeText(getContext(), enemy.left-player.left+"Not Killed", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
