@@ -29,6 +29,7 @@ public class Game extends View {
 
     float score_val = 0;
     float high_score_val = 0;
+    int kills=-1;
 
     boolean clicked=false;
 
@@ -70,7 +71,10 @@ public class Game extends View {
 
         enemy.bottom=height-50;
         enemy.top=height-100;
-        if(enemy_x<=0)enemy_x=width-75;
+        if(enemy_x<=0){
+            enemy_x=width-75;
+            kills++;
+        }
         enemy.left=enemy_x-25;
         enemy.right=enemy_x+25;
         paint_enemy.setColor(Color.RED);
@@ -79,7 +83,8 @@ public class Game extends View {
         paint_score.setColor(Color.BLACK);
         paint_score.setTextSize(45);
         high_score_val=gethigh_score();
-        canvas.drawText("High Score : "+String.format("%.02f", high_score_val),100,75,paint_score);
+        canvas.drawText("High Score : "+String.format("%.02f", high_score_val),75,75,paint_score);
+        canvas.drawText("Kills : "+kills,width-400,150,paint_score);
         canvas.drawText("Score : "+String.format("%.02f", score_val),width-400,75,paint_score);
 
         //When enemy and player collide, Game Over
@@ -91,6 +96,7 @@ public class Game extends View {
             v.vibrate(400);
             score_val=0;
             enemy_x=0;
+            kills=-1;
         }
 
         enemy_x-=3;
