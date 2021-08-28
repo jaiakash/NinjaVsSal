@@ -13,7 +13,7 @@ Implement the game shown Refernces > App using canvas and provided resources.
 3) Added random enemy spawn. <b>Done</b>
 
 ## Hackermode++:
-1)Add attack mode and stamina meter.Ninja can attack the Sal only if the Ninja’s stamina is above 25% and Stamina Decreases by 25% per one attack execution and Rejuvenate stamina  by 1% as time progresses until it reaches 100%
+1)Add attack mode and stamina meter.Ninja can attack the Sal only if the Ninja’s stamina is above 25% and Stamina Decreases by 25% per one attack execution and Rejuvenate stamina  by 1% as time progresses until it reaches 100%. <b>Done</b>
 
 ## References:
 
