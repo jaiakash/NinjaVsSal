@@ -2,7 +2,7 @@
 
 Implement the game shown Refernces > App using canvas and provided resources.
 
-## Nomral
+## Normal
 1) Made a basic game. <b>Done</b>
 2) Added high score and kill count. <b>Done</b>
 3) Added vibration and music. <b>Done</b>
