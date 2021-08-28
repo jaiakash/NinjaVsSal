@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -24,15 +25,19 @@ public class Game extends View {
 
     Rect enemy;
     Rect player;
+    RectF joystick;
 
     Paint paint_enemy;
     Paint paint_player;
     Paint paint_score;
+    Paint paint_joystick;
 
     int enemy_x=-1;
     int player_y=-1;
     int max_jump=200;
+    int max_jump_joystick=100;
     int enemy_speed=3;
+    int position_js=0;
 
     float score_val = 0;
     float high_score_val = 0;
@@ -49,9 +54,11 @@ public class Game extends View {
         super(context);
         player = new Rect();
         enemy = new Rect();
+        joystick = new RectF();
         paint_enemy = new Paint();
         paint_player = new Paint();
         paint_score = new Paint();
+        paint_joystick = new Paint();
 
         paint_score.setAntiAlias(true);
         paint_score.setUnderlineText(true);
@@ -72,14 +79,12 @@ public class Game extends View {
         int height=getHeight();
 
         paint_player.setColor(Color.GREEN);
-
         if(player_y<=0)player_y=height-75;
         if(clicked)player_y-=3;
         if(player_y<=(height-75-max_jump)) clicked=false;
         if(!clicked && player_y<height-75)player_y+=3;
-
-        player.bottom=player_y+50;
-        player.top=player_y-50;
+        player.bottom=player_y-200;
+        player.top=player_y-300;
         player.left=60;
         player.right=160;
         Drawable plyr = ContextCompat.getDrawable(getContext(), R.drawable.player);
@@ -87,8 +92,8 @@ public class Game extends View {
         plyr.draw(canvas);
         //canvas.drawRect(player,paint_player);
 
-        enemy.bottom=height-25;
-        enemy.top=height-125;
+        enemy.bottom=height-275;
+        enemy.top=height-375;
         if(enemy_x<=0){
             enemy_x=width-75;
             kills++;
@@ -109,6 +114,26 @@ public class Game extends View {
         canvas.drawText("High Score : "+String.format("%.02f", high_score_val),75,75,paint_score);
         canvas.drawText("Kills : "+kills,width-400,150,paint_score);
         canvas.drawText("Score : "+String.format("%.02f", score_val),width-400,75,paint_score);
+
+        // Joystick Draw
+        paint_joystick.setColor(Color.LTGRAY);
+        if(position_js==0){
+            position_js=height-100;
+        }
+        joystick.top=position_js-50;
+        joystick.bottom=position_js+50;
+        if(position_js!=height-100){
+            position_js-=(position_js-(height-100))/10;
+        }
+        if(position_js<=height-250){
+            position_js=height-250;
+        }
+        else if(position_js>=height){
+            position_js=height;
+        }
+        joystick.left=100;
+        joystick.right=200;
+        canvas.drawRoundRect(joystick.left,joystick.top,joystick.right,joystick.bottom,50,50,paint_joystick);
 
         //When enemy and player collide, Game Over
         if(Rect.intersects(enemy,player)) {
@@ -144,10 +169,20 @@ public class Game extends View {
         switch (maskedAction) {
 
             case MotionEvent.ACTION_DOWN:
-                clicked=true;
+                if((event.getX()<=joystick.right &&  event.getX()>=joystick.left) &&
+                        (event.getY()>=getHeight()-150 && event.getY()<=getHeight()-50)) {
+                    if(position_js>getHeight()-100-max_jump_joystick && position_js<getHeight()-100+max_jump_joystick) {
+                        clicked = true;
+                        position_js = (int) event.getY();
+                    }
+                }
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
             case MotionEvent.ACTION_MOVE:
+                if(clicked && event.getY()>getHeight()-100-max_jump_joystick && event.getY()<getHeight()-100+max_jump_joystick){
+                    position_js = (int) event.getY();
+                }
+                break;
             case MotionEvent.ACTION_UP:
                 break;
             case MotionEvent.ACTION_POINTER_UP:
