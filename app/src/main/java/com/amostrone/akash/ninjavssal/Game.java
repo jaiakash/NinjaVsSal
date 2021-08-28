@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.View;
@@ -67,6 +68,8 @@ public class Game extends View {
         player.top=player_y-25;
         player.left=50;
         player.right=100;
+        //Drawable plyr = getResources().getDrawable(R.drawable.player,null);
+        //plyr.draw(canvas);
         canvas.drawRect(player,paint_player);
 
         enemy.bottom=height-50;
@@ -93,7 +96,9 @@ public class Game extends View {
             sethigh_score(score_val);
 
             Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+            //TODO vib
             v.vibrate(400);
+
             score_val=0;
             enemy_x=0;
             kills=-1;
