@@ -15,6 +15,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
+
+import java.util.concurrent.ThreadLocalRandom;
+
 public class Game extends View {
 
     Rect enemy;
@@ -26,11 +30,15 @@ public class Game extends View {
 
     int enemy_x=-1;
     int player_y=-1;
-    int max_jump=100;
+    int max_jump=200;
+    int enemy_speed=3;
 
     float score_val = 0;
     float high_score_val = 0;
     int kills=-1;
+
+    int[] drawable_enemy = {R.drawable.enemy1, R.drawable.enemy2};
+    int random_enemy_drawable = ThreadLocalRandom.current().nextInt(0, drawable_enemy.length);
 
     boolean clicked=false;
 
@@ -60,28 +68,34 @@ public class Game extends View {
         paint_player.setColor(Color.GREEN);
 
         if(player_y<=0)player_y=height-75;
-        if(clicked)player_y--;
+        if(clicked)player_y-=3;
         if(player_y<=(height-75-max_jump)) clicked=false;
-        if(!clicked && player_y<height-75)player_y++;
+        if(!clicked && player_y<height-75)player_y+=3;
 
-        player.bottom=player_y+25;
-        player.top=player_y-25;
-        player.left=50;
-        player.right=100;
-        //Drawable plyr = getResources().getDrawable(R.drawable.player,null);
-        //plyr.draw(canvas);
-        canvas.drawRect(player,paint_player);
+        player.bottom=player_y+50;
+        player.top=player_y-50;
+        player.left=60;
+        player.right=160;
+        Drawable plyr = ContextCompat.getDrawable(getContext(), R.drawable.player);
+        plyr.setBounds(player.left, player.top, player.right, player.bottom);
+        plyr.draw(canvas);
+        //canvas.drawRect(player,paint_player);
 
-        enemy.bottom=height-50;
-        enemy.top=height-100;
+        enemy.bottom=height-25;
+        enemy.top=height-125;
         if(enemy_x<=0){
             enemy_x=width-75;
             kills++;
+            enemy_speed+=2;
+            random_enemy_drawable = ThreadLocalRandom.current().nextInt(0, drawable_enemy.length);
         }
-        enemy.left=enemy_x-25;
-        enemy.right=enemy_x+25;
+        enemy.left=enemy_x-50;
+        enemy.right=enemy_x+50;
         paint_enemy.setColor(Color.RED);
-        canvas.drawRect(enemy,paint_enemy);
+        Drawable enmy = ContextCompat.getDrawable(getContext(),drawable_enemy[random_enemy_drawable]);
+        enmy.setBounds(enemy.left, enemy.top, enemy.right, enemy.bottom);
+        enmy.draw(canvas);
+        //canvas.drawRect(enemy,paint_enemy);
 
         paint_score.setColor(Color.BLACK);
         paint_score.setTextSize(45);
@@ -97,14 +111,15 @@ public class Game extends View {
 
             Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
             //TODO vib
-            v.vibrate(400);
+            //v.vibrate(400);
 
             score_val=0;
             enemy_x=0;
             kills=-1;
+            enemy_speed=3;
         }
 
-        enemy_x-=3;
+        enemy_x-=enemy_speed;
         score_val+=0.01;
         postInvalidate();
     }
