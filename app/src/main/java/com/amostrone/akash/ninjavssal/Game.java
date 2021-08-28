@@ -182,7 +182,7 @@ public class Game extends View {
                     public void onClick(DialogInterface dialog, int which) {
                         clicked=false;
                         isPaused=false;
-                        enemy_speed=3;
+                        enemy_speed=4;
 
                         stamina = 100;
                     }
