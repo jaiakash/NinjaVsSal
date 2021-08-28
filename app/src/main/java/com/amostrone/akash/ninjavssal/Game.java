@@ -36,7 +36,7 @@ public class Game extends View {
     int player_y=-1;
     int max_jump=200;
     int max_jump_joystick=100;
-    int enemy_speed=3;
+    int enemy_speed=2;
     int position_js=0;
 
     float score_val = 0;
@@ -84,7 +84,7 @@ public class Game extends View {
         if(player_y<=(height-75-max_jump)) clicked=false;
         if(!clicked && player_y<height-75)player_y+=3;
         player.bottom=player_y-200;
-        player.top=player_y-300;
+        player.top=player_y-350;
         player.left=60;
         player.right=160;
         Drawable plyr = ContextCompat.getDrawable(getContext(), R.drawable.player);
@@ -92,12 +92,12 @@ public class Game extends View {
         plyr.draw(canvas);
         //canvas.drawRect(player,paint_player);
 
-        enemy.bottom=height-275;
-        enemy.top=height-375;
+        enemy.bottom=height-250;
+        enemy.top=height-395;
         if(enemy_x<=0){
             enemy_x=width-75;
             kills++;
-            enemy_speed+=2;
+            enemy_speed+=1;
             random_enemy_drawable = ThreadLocalRandom.current().nextInt(0, drawable_enemy.length);
         }
         enemy.left=enemy_x-50;
@@ -146,7 +146,7 @@ public class Game extends View {
             score_val=0;
             enemy_x=0;
             kills=-1;
-            enemy_speed=3;
+            enemy_speed=2;
         }
 
         enemy_x-=enemy_speed;
