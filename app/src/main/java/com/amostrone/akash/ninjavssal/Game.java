@@ -93,8 +93,8 @@ public class Game extends View {
         if(player_y<=0)player_y=height-75;
         if(clicked)player_y-=5;
         if(player_y<=(height-75-max_jump)) clicked=false;
-        if(!clicked && player_y<height-75)player_y+=3;
-        player.bottom=player_y-150;
+        if(!clicked && player_y<height-75)player_y+=2;
+        player.bottom=player_y-125;
         player.top=player_y-280;
         player.left=60;
         player.right=160;
@@ -103,8 +103,8 @@ public class Game extends View {
         plyr.draw(canvas);
         //canvas.drawRect(player,paint_player);
 
-        enemy.bottom=height-210;
-        enemy.top=height-355;
+        enemy.bottom=height-180;
+        enemy.top=height-325;
         if(enemy_x<=0){
             respawnNewEnemy();
         }
@@ -132,8 +132,8 @@ public class Game extends View {
         if(position_js!=height-100){
             position_js-=(position_js-(height-100))/10;
         }
-        if(position_js<=height-250){
-            position_js=height-250;
+        if(position_js<=height-450){
+            position_js=height-450;
         }
         else if(position_js>=height){
             position_js=height;
@@ -182,6 +182,7 @@ public class Game extends View {
                     public void onClick(DialogInterface dialog, int which) {
                         clicked=false;
                         isPaused=false;
+                        enemy_speed=3;
 
                         stamina = 100;
                     }
@@ -217,6 +218,8 @@ public class Game extends View {
                         (event.getY()>=getHeight()-150 && event.getY()<=getHeight()-50)) {
                     if(position_js>getHeight()-100-max_jump_joystick && position_js<getHeight()-100+max_jump_joystick) {
                         clicked = true;
+                        Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                        v.vibrate(400);
                         position_js = (int) event.getY();
                     }
                 }
@@ -224,6 +227,10 @@ public class Game extends View {
                 // For attack joystick
                 if(event.getX()>=(getWidth()-200) && event.getX()<=(getWidth()-100) &&
                         event.getY()>=(getHeight()-150) && event.getY()<=(getHeight()-50) ){
+
+                    Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                    v.vibrate(400);
+
                     stamina-=25;
                     if(stamina<=0)
                         GameOver();
