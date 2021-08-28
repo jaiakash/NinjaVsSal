@@ -67,6 +67,7 @@ public class Game extends View {
         paint_score.setTypeface(typeface);
 
         //Background music
+        ring_background.setLooping(true);
         ring_background.start();
     }
 
@@ -83,8 +84,8 @@ public class Game extends View {
         if(clicked)player_y-=3;
         if(player_y<=(height-75-max_jump)) clicked=false;
         if(!clicked && player_y<height-75)player_y+=3;
-        player.bottom=player_y-200;
-        player.top=player_y-350;
+        player.bottom=player_y-150;
+        player.top=player_y-280;
         player.left=60;
         player.right=160;
         Drawable plyr = ContextCompat.getDrawable(getContext(), R.drawable.player);
@@ -92,8 +93,8 @@ public class Game extends View {
         plyr.draw(canvas);
         //canvas.drawRect(player,paint_player);
 
-        enemy.bottom=height-250;
-        enemy.top=height-395;
+        enemy.bottom=height-210;
+        enemy.top=height-355;
         if(enemy_x<=0){
             enemy_x=width-75;
             kills++;
@@ -108,7 +109,7 @@ public class Game extends View {
         enmy.draw(canvas);
         //canvas.drawRect(enemy,paint_enemy);
 
-        paint_score.setColor(Color.BLACK);
+        paint_score.setColor(Color.RED);
         paint_score.setTextSize(45);
         high_score_val=gethigh_score();
         canvas.drawText("High Score : "+String.format("%.02f", high_score_val),75,75,paint_score);
