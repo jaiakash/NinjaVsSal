@@ -1,6 +1,6 @@
 # NinjaVsSal - Delta Hackathon App
 
-Implement the game shown in the provided video using canvas and provided resources.
+Implement the game shown Refernces > App using canvas and provided resources.
 
 ## Hackermode:
 1) Implement Virtual Joy-Stick.
