@@ -37,7 +37,7 @@ public class Game extends View {
     float high_score_val = 0;
     int kills=-1;
 
-    int[] drawable_enemy = {R.drawable.enemy1, R.drawable.enemy2};
+    int[] drawable_enemy = {R.drawable.enemy1, R.drawable.enemy2, R.drawable.enemy3, R.drawable.enemy4, R.drawable.enemy5, R.drawable.enemy6};
     int random_enemy_drawable = ThreadLocalRandom.current().nextInt(0, drawable_enemy.length);
 
     boolean clicked=false;
