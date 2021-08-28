@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,6 +41,8 @@ public class Game extends View {
     int[] drawable_enemy = {R.drawable.enemy1, R.drawable.enemy2, R.drawable.enemy3, R.drawable.enemy4, R.drawable.enemy5, R.drawable.enemy6};
     int random_enemy_drawable = ThreadLocalRandom.current().nextInt(0, drawable_enemy.length);
 
+    MediaPlayer ring_background= MediaPlayer.create(getContext(),R.raw.background);
+
     boolean clicked=false;
 
     public Game(Context context) {
@@ -55,6 +58,9 @@ public class Game extends View {
         paint_score.setFakeBoldText(true);
         Typeface typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD);
         paint_score.setTypeface(typeface);
+
+        //Background music
+        ring_background.start();
     }
 
     @Override
@@ -110,8 +116,7 @@ public class Game extends View {
             sethigh_score(score_val);
 
             Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-            //TODO vib
-            //v.vibrate(400);
+            v.vibrate(400);
 
             score_val=0;
             enemy_x=0;
