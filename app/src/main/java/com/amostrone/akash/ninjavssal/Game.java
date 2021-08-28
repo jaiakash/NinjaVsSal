@@ -2,7 +2,9 @@ package com.amostrone.akash.ninjavssal;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -39,10 +41,14 @@ public class Game extends View {
     int enemy_speed=3;
     int position_js=0;
     float stamina=100;
+    float stamina_add=0.005f;
+    float score_add=0.01f;
 
     float score_val = 0;
     float high_score_val = 0;
-    int kills=-1;
+    int kills=0;
+
+    boolean isPaused=false;
 
     int[] drawable_enemy = {R.drawable.enemy1, R.drawable.enemy2, R.drawable.enemy3, R.drawable.enemy4, R.drawable.enemy5, R.drawable.enemy6};
     int random_enemy_drawable = ThreadLocalRandom.current().nextInt(0, drawable_enemy.length);
@@ -142,10 +148,10 @@ public class Game extends View {
             GameOver();
         }
 
-        enemy_x-=enemy_speed;
-        score_val+=0.01;
-        if(stamina<100){
-            stamina+=0.005;
+        if(!isPaused)enemy_x-=enemy_speed;
+        if(!isPaused)score_val+=score_add;
+        if(stamina<100 && !isPaused){
+            stamina+=stamina_add;
         }
         postInvalidate();
     }
@@ -163,21 +169,41 @@ public class Game extends View {
         Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(400);
 
+        isPaused=true;
+
+        new AlertDialog.Builder(getContext())
+                .setCancelable(false)
+                .setTitle("Game Over")
+                .setMessage("Your Score is "+String.format("%.02f", score_val)+" & You killed "+kills+" Zombies.")
+
+                // Specifying a listener allows you to take an action before dismissing the dialog.
+                // The dialog is automatically dismissed when a dialog button is clicked.
+                .setPositiveButton("Restart", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        clicked=false;
+                        isPaused=false;
+
+                        stamina = 100;
+                    }
+                })
+
+                // A null listener allows the button to dismiss the dialog and take no further action.
+                .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        MainActivity mn = new MainActivity();
+                        mn.exit();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+
         score_val=0;
         enemy_x=0;
-        kills=-1;
-        enemy_speed=3;
-        stamina=100;
+        kills=0;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
-        // get pointer index from the event object
-        int pointerIndex = event.getActionIndex();
-
-        // get pointer ID
-        int pointerId = event.getPointerId(pointerIndex);
 
         // get masked (not specific to a pointer) action
         int maskedAction = event.getActionMasked();

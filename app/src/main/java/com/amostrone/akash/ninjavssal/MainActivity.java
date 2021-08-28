@@ -30,4 +30,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(game);
     }
 
+    public void exit() {
+        finishAffinity();
+        System.exit(0);
+    }
+
 }
